@@ -10,6 +10,7 @@ const loading = ref(false);
 const error = ref(null);
 const cityName = ref('');
 const weather = ref(null);
+const stateName = ref('');
 
 //async function to fetch weather data
 async function fetchWeather() {
@@ -20,11 +21,12 @@ async function fetchWeather() {
   //try block to fetch data
   try {
     //get weather data from api and set the city value 
-    data.value = await getWeatherData(city.value);
+    data.value = await getWeatherData(q);
     //set cityName, temp, and weather values
     cityName.value = city.value.trim();
-    temp.value = data.value.current.temp;
-    weather.value = data.value.current.feels_like;
+    temp.value = data.value.weather.current.temp;
+    weather.value = data.value.weather.current.feels_like;
+    stateName.value = data.value.location.state
     //catch block to set error value
   } catch (err) {
     error.value = err;
@@ -59,9 +61,9 @@ async function fetchWeather() {
         <Icon icon="solar:magnifer-linear" class="text-white w-8 h-4" />
       </button>
     </form>
-<h1 v-if ="error" class = "text-red-400 ml-1 sm: ml-15"> Error:{{ error.message }}</h1>
+<h1 v-if ="error" class = "text-red-400 ml-1 sm:ml-2 md:ml-15 lg:ml-40"> Error:{{ error.message }}</h1>
     <div class="text-center mt-15">
-      <h1 class="text-xl font-semibold">{{ cityName }}</h1>
+      <h1 class="text-xl font-semibold">{{ cityName}} <span class="text-gray-400 text-sm">{{ stateName }}</span></h1>
       <!-- icon + temp side-by-side -->
       <div class="mt-2 flex items-center justify-center gap-2">
         <Icon :icon="tempIcon" class="w-8 h-8" />

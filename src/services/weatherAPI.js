@@ -12,6 +12,7 @@ export async function getWeatherData(city) {
     }
     //convert geo to json
     const geoData = await geo.json();
+    console.log(geoData);
     //if no data found, throw error
     if (!geoData.length) {
         throw new Error('No geocoding data found for the specified city');
@@ -19,6 +20,7 @@ export async function getWeatherData(city) {
     //get lat and lon from geoData
     const lat = geoData[0].lat;
     const lon = geoData[0].lon;
+    const location = geoData[0]
         //fetch weather data using lat and lon
         if (!key ) throw new Error('API key is missing');
         const response = await fetch(`https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lon}&units=metric&appid=${key}`);
@@ -26,14 +28,14 @@ export async function getWeatherData(city) {
             throw new Error('Failed to fetch weather data');
         }
         //convert response to json
-        const data = await response.json();
+        const weather = await response.json();
         //if no data found, throw error
-        if (!data.timezone) {
+        if (!weather.timezone) {
             throw new Error('No weather data found for the specified location');
         }
-        console.log(data);
+        console.log(weather);
         
-        return data;
+        return {weather, location};
     }
     //catch block to log errorrs
     catch (error) {
