@@ -1,8 +1,8 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, computed} from 'vue';
 import { getWeatherData } from '@/services/weatherAPI';
 import { Icon } from '@iconify/vue'
-
+//variables for api data
 const city = ref('Manila');
 const data = ref(null);
 const temp = ref(null);
@@ -11,24 +11,38 @@ const error = ref(null);
 const cityName = ref('');
 const weather = ref(null);
 
-
+//async function to fetch weather data
 async function fetchWeather() {
   const q = city.value.trim();
+  //if no input, return
   if (!q) return;
   loading.value = true;
+  //try block to fetch data
   try {
+    //get weather data from api and set the city value 
     data.value = await getWeatherData(city.value);
+    //set cityName, temp, and weather values
     cityName.value = city.value.trim();
     temp.value = data.value.current.temp;
-    
     weather.value = data.value.current.feels_like;
-
+    //catch block to set error value
   } catch (err) {
     error.value = err;
+    //finally block to set loading to false
   } finally {
     loading.value = false;
   }
   }
+//dynamic computed property for temperature icon
+  const tempIcon = computed(() => {
+    const item = temp.value;
+    return item >= 35 ? 'solar:temperature-hot-line-duotone' :
+    item >= 30 ? 'solar:sun-line-duotone' :
+    item >= 20 ? 'solar:cloud-sun-line-duotone' :
+    item >= 12 ? 'solar:cloud-line-duotone' :
+    item >= 5 ? 'solar:cloud-rain-broken' :
+    'solar:snowflake-line-duotone';
+  });
 
   fetchWeather()
 </script>
@@ -50,12 +64,7 @@ async function fetchWeather() {
       <h1 class="text-xl font-semibold">{{ cityName }}</h1>
       <!-- icon + temp side-by-side -->
       <div class="mt-2 flex items-center justify-center gap-2">
-        <Icon v-if="temp >= 35" icon="solar:temperature-hot-line-duotone" class="w-8 h-8" />
-        <Icon v-else-if="temp >= 30" icon="solar:sun-line-duotone" class="w-8 h-8" />
-        <Icon v-else-if="temp >= 20" icon="solar:cloud-sun-line-duotone" class="w-8 h-8" />
-        <Icon v-else-if="temp >= 12" icon="solar:cloud-line-duotone" class="w-8 h-8" />
-        <Icon v-else-if="temp >= 5" icon="solar:cloud-rain-broken" class="w-8 h-8" />
-        <Icon v-else icon="solar:snowflake-line-duotone" class="w-8 h-8" />
+        <Icon :icon="tempIcon" class="w-8 h-8" />
         <span class="text-xl font-semibold">{{ temp }} °C</span>
       </div>
       <div class="mt-2 flex items-center justify-center gap-2">
