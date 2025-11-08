@@ -65,9 +65,9 @@ async function fetchWeather() {
     <div class="text-center mt-15">
       <h1 class="text-xl font-semibold">{{ cityName}} <span class="text-gray-400 text-sm">{{ stateName }}</span></h1>
       <!-- icon + temp side-by-side -->
-      <div class="mt-2 flex items-center justify-center gap-2">
-        <Icon :icon="tempIcon" class="w-8 h-8" />
-        <span class="text-xl font-semibold">{{ temp }} °C</span>
+      <div class="mt-2 flex items-center justify-center gap-4">
+        <Icon :icon="tempIcon" class="w-16 h-16" />
+        <span class="text-4xl font-bold">{{ temp }} °C</span>
       </div>
       <div class="mt-2 flex items-center justify-center gap-2">
         <h1 class="text-sm font-semi text-gray-400">feels like: {{ weather }}</h1>
