@@ -20,8 +20,8 @@ async function fetchWeather() {
     data.value = await getWeatherData(city.value);
     cityName.value = city.value.trim();
     temp.value = data.value.current.temp;
-    temp.value = (temp.value - 273.15).toFixed(2);
-    weather.value = data.value.current.weather[0].main;
+    
+    weather.value = data.value.current.feels_like;
 
   } catch (err) {
     error.value = err;
@@ -50,15 +50,16 @@ async function fetchWeather() {
       <h1 class="text-xl font-semibold">{{ cityName }}</h1>
       <!-- icon + temp side-by-side -->
       <div class="mt-2 flex items-center justify-center gap-2">
-        <Icon v-if="temp >= 30" icon="solar:sun-line-duotone" class="w-8 h-8" />
-        <Icon v-else-if="temp >= 20 && temp < 30" icon="solar:cloud-sun-line-duotone" class="w-8 h-8"/>
-        <Icon v-else-if="temp >= 10 && temp < 20" icon="solar:cloud-line-duotone" class="w-8 h-8" />
-        <Icon v-else-if="temp >= 10 && temp <= 15" icon="solar:cloud-rain-broken" class="w-8 h-8" />
+        <Icon v-if="temp >= 35" icon="solar:temperature-hot-line-duotone" class="w-8 h-8" />
+        <Icon v-else-if="temp >= 30" icon="solar:sun-line-duotone" class="w-8 h-8" />
+        <Icon v-else-if="temp >= 20" icon="solar:cloud-sun-line-duotone" class="w-8 h-8" />
+        <Icon v-else-if="temp >= 12" icon="solar:cloud-line-duotone" class="w-8 h-8" />
+        <Icon v-else-if="temp >= 5" icon="solar:cloud-rain-broken" class="w-8 h-8" />
         <Icon v-else icon="solar:snowflake-line-duotone" class="w-8 h-8" />
         <span class="text-xl font-semibold">{{ temp }} °C</span>
       </div>
       <div class="mt-2 flex items-center justify-center gap-2">
-        <h1 class="text-md font-semi">{{ weather }}</h1>
+        <h1 class="text-sm font-semi text-gray-400">feels like: {{ weather }}</h1>
       </div>
     </div>
   </div>
