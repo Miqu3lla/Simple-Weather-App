@@ -21,6 +21,8 @@ export async function getWeatherData(city) {
     const lat = geoData[0].lat;
     const lon = geoData[0].lon;
     const location = geoData[0]
+
+    
         //fetch weather data using lat and lon
         if (!key ) throw new Error('API key is missing');
         const response = await fetch(`https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lon}&units=metric&appid=${key}`);
