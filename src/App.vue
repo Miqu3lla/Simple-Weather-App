@@ -55,10 +55,12 @@ async function fetchWeather() {
     item >= 5 ? { icon: 'solar:cloud-rain-broken', class: 'text-gray-500' } :
     { icon: 'solar:snowflake-line-duotone', class: 'text-blue-500' };  // Added a default class for consistency
   });
-
+//computed property to get the day value and convert it to weekday name
 const getDay = computed(() => {
+  //map through the day array and convert the dt values
  return day.value.map((days) => {
   const date = new Date(days.dt * 1000)
+  //convert to weekday name
  return date.toLocaleDateString('en-us',{weekday: 'long'})
 })}
  )
@@ -109,37 +111,25 @@ const getDay = computed(() => {
         />
       </div>
     </div>
-    <div class="flex ml-10 p-10 gap-3 " >
+    
+    <h2 class="text-center text-2xl font-bold mt-16 mb-6 text-gray-800">Weekly Weather Forecast</h2>
+    
+    <div class="flex ml-10 p-10 gap-3  overflow-x-auto flex-nowrap w-100 sm:w-95 sm:ml-25 md:w-160 md:ml-10 lg:w-200 lg:ml-15 xl:w-full xl:ml-40 " >
       <DailyForecast
       :day = 'getDay[0]'
-       :icon="day[0].temp.day"
        :Temp='day[0].temp.day'
       />
       <DailyForecast
       :day = 'getDay[1]'
-       :icon="day[1].temp.day"
        :Temp='day[1].temp.day'
       />
       <DailyForecast
       :day = 'getDay[2]'
-       :icon="day[2].temp.day"
        :Temp='day[2].temp.day'
       />
-          <DailyForecast
-      :day="getDay[4]"
-      :Temp="day[4].temp.day"
-    />
-    <DailyForecast
-      :day="getDay[5]"
-      :Temp="day[5].temp.day"
-    />
-    <DailyForecast
-      :day="getDay[6]"
-      :Temp="day[6].temp.day"
-    />
-    <DailyForecast
-      :day="getDay[7]"
-      :Temp="day[7].temp.day"
+        <DailyForecast
+      :day="getDay[3]"
+      :Temp="day[3].temp.day"
     />
         <DailyForecast
       :day="getDay[4]"
