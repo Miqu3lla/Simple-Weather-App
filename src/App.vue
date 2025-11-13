@@ -3,6 +3,7 @@ import { ref, computed} from 'vue';
 import { getWeatherData } from '@/services/weatherAPI';
 import { Icon } from '@iconify/vue'
 import WeatherStat from '@/components/weatherStat.vue';
+import DailyForecast from '@/components/dailyForecast.vue';
 //variables for api data
 const city = ref('Manila');
 const data = ref(null);
@@ -15,6 +16,7 @@ const stateName = ref('');
 const weatherHumidity = ref(null);
 const weatherVisibility = ref(null);
 const weatherWindSpeed = ref(null);
+const day = ref([]);
 
 //async function to fetch weather data
 async function fetchWeather() {
@@ -34,6 +36,7 @@ async function fetchWeather() {
     weatherHumidity.value = data.value.weather.current.humidity;
     weatherVisibility.value = data.value.weather.current.visibility / 1000;
     weatherWindSpeed.value = data.value.weather.current.wind_speed;
+    day.value = data.value.weather.daily.slice(0,8);
     //catch block to set error value
   } catch (err) {
     error.value = err;
@@ -52,6 +55,13 @@ async function fetchWeather() {
     item >= 5 ? { icon: 'solar:cloud-rain-broken', class: 'text-gray-500' } :
     { icon: 'solar:snowflake-line-duotone', class: 'text-blue-500' };  // Added a default class for consistency
   });
+
+const getDay = computed(() => {
+ return day.value.map((days) => {
+  const date = new Date(days.dt * 1000)
+ return date.toLocaleDateString('en-us',{weekday: 'long'})
+})}
+ )
   fetchWeather()
 </script>
 
@@ -62,7 +72,7 @@ async function fetchWeather() {
       <h1 class="text-3xl font-semibold mb-4">Weather App</h1>
       <h1 class="text-gray-500"> Your daily weather companion</h1>
     </div>
-    <div class="border-gray shadow-md rounded-xl p-6 w-80 mx-auto h-500 sm:w-75 md:w-150 lg:w-250 xl:w-300">
+    <div class="border-gray shadow-md rounded-xl p-6 w-80 mx-auto h-275 sm:w-75 md:w-135 lg:w-175 xl:w-300 xl:h-200">
       <form @submit.prevent="fetchWeather" class="flex items-center justify-center mt-5">
         <input type="text" v-model="city" placeholder="Search location" class="border-gray shadow-md rounded-lg w-50  h-10 md:w-100 lg:w-150" />
         <button type="submit" class="ml-2 p-1 bg-black text-white rounded-full h-10 w-10">
@@ -81,7 +91,7 @@ async function fetchWeather() {
           <h1 class="text-sm font-semi text-gray-400">feels like: {{ weather }}</h1>
         </div>
       </div>
-      <div class = "mt-35 ml-8 grid grid-cols-1 gap-1 md:grid-cols-2 lg:grid-cols-3 lg:ml-15 lg:mr-8">
+      <div class = "mt-35 ml-8 grid grid-cols-1  gap-1 md:grid-cols-2 lg:grid-cols-2 lg:ml-15 lg:mr-8 xl:grid-cols-3">
         <WeatherStat
           WeatherIcon="line-md:water"
           WeatherName="Humidity"
@@ -98,6 +108,56 @@ async function fetchWeather() {
           :WeatherValue ="weatherVisibility"
         />
       </div>
+    </div>
+    <div class="flex ml-10 p-10 gap-3 " >
+      <DailyForecast
+      :day = 'getDay[0]'
+       :icon="day[0].temp.day"
+       :Temp='day[0].temp.day'
+      />
+      <DailyForecast
+      :day = 'getDay[1]'
+       :icon="day[1].temp.day"
+       :Temp='day[1].temp.day'
+      />
+      <DailyForecast
+      :day = 'getDay[2]'
+       :icon="day[2].temp.day"
+       :Temp='day[2].temp.day'
+      />
+          <DailyForecast
+      :day="getDay[4]"
+      :Temp="day[4].temp.day"
+    />
+    <DailyForecast
+      :day="getDay[5]"
+      :Temp="day[5].temp.day"
+    />
+    <DailyForecast
+      :day="getDay[6]"
+      :Temp="day[6].temp.day"
+    />
+    <DailyForecast
+      :day="getDay[7]"
+      :Temp="day[7].temp.day"
+    />
+        <DailyForecast
+      :day="getDay[4]"
+      :Temp="day[4].temp.day"
+    />
+    <DailyForecast
+      :day="getDay[5]"
+      :Temp="day[5].temp.day"
+    />
+    <DailyForecast
+      :day="getDay[6]"
+      :Temp="day[6].temp.day"
+    />
+    <DailyForecast
+      :day="getDay[7]"
+      :Temp="day[7].temp.day"
+    />
+    
     </div>
   </div>
 </template>
