@@ -1,10 +1,11 @@
 <script setup>
-import { ref, computed} from 'vue';
+import { ref, computed, watch} from 'vue';
 import { getWeatherData } from '@/services/weatherAPI';
 import { Icon } from '@iconify/vue'
 import WeatherStat from '@/components/weatherStat.vue';
 import DailyForecast from '@/components/dailyForecast.vue';
 //variables for api data
+const key = import.meta.env.VITE_WEATHER_KEY;
 const city = ref('Manila');
 const data = ref(null);
 const temp = ref(null);
@@ -18,7 +19,12 @@ const weatherVisibility = ref(null);
 const weatherWindSpeed = ref(null);
 const day = ref([]);
 const suggestion = ref(['']);
-const showSuggestions = ref(true);
+const showSuggestions = ref(false);
+const lat = ref(null);
+const lon = ref(null);
+
+let debounceTimer = null;
+
 //async function to fetch weather data
 async function fetchWeather() {
   const q = city.value.trim();
@@ -28,7 +34,12 @@ async function fetchWeather() {
   //try block to fetch data
   try {
     //get weather data from api and set the city value 
+    showSuggestions.value = true;
     data.value = await getWeatherData(q);
+    lat.value = data.value.location.lat
+    lon.value = data.value.location.lon
+     const response = await fetch(`https://api.openweathermap.org/data/3.0/onecall?lat=${lat.value}&lon=${lon.value}&units=metric&appid=${key}`);
+    const weatherData = await response.json();
     //set cityName, temp, and weather values
     cityName.value = data.value.location.name;
     temp.value = data.value.weather.current.temp;
@@ -38,12 +49,9 @@ async function fetchWeather() {
     weatherVisibility.value = data.value.weather.current.visibility / 1000;
     weatherWindSpeed.value = data.value.weather.current.wind_speed;
     day.value = data.value.weather.daily.slice(0,8);
-    
-    // Fixed: Add city to array instead of replacing
-    const cityNameFromAPI = data.value.location.name;
 
-    if (!suggestion.value.includes(cityNameFromAPI)) {
-      suggestion.value.push(cityNameFromAPI);
+    if (!suggestion.value.includes(cityName.value)) {
+      suggestion.value.push(cityName.value);
     }
     
     //catch block to set error value
@@ -85,8 +93,10 @@ const handleSearchInput = computed(() => {
 const clickSuggestion = (suggestion) => {
   city.value = suggestion;
   showSuggestions.value = false;
+  fetchWeather();
+  showSuggestions.value = true;
+
  }  
- 
  fetchWeather()
 </script>
 
@@ -99,10 +109,10 @@ const clickSuggestion = (suggestion) => {
     </div>
     <div class="border-gray shadow-md rounded-xl p-6 w-80 mx-auto h-275 sm:w-75 md:w-135 lg:w-175 xl:w-300 xl:h-200">
       <form @submit.prevent="fetchWeather" class="flex items-center justify-center mt-5">
-        <input type="text" v-model="city" placeholder="Search location" class="border-gray shadow-md rounded-lg w-50  h-10 md:w-100 lg:w-150" />
-        <div v-if="showSuggestions" class="absolute bg-white border border-gray-300 mt-22 mr-11 w-50 md:w-100 lg:w-150 max-h-40 overflow-y-auto">
+        <input type="text" v-model="city" placeholder="Search location" class="border-gray shadow-md rounded-lg w-50  h-10 md:w-100 lg:w-150"/>
+        <div v-if="showSuggestions && handleSearchInput.length > 0" class="absolute bg-white border border-gray-300 mt-22 mr-11 w-50 md:w-100 lg:w-150 max-h-40 overflow-y-auto">
           <ul>
-            <li v-for="suggestions in handleSearchInput" :key="suggestions" @click="" class ="px-4 py-2">
+            <li v-for="suggestions in handleSearchInput" :key="suggestions" @click="clickSuggestion(suggestions)" class ="px-4 py-2">
               {{ suggestions }}
             </li>
           
@@ -114,7 +124,7 @@ const clickSuggestion = (suggestion) => {
       </form>
       <h1 v-if ="error" class = "text-red-400 ml-1 sm:ml-2 md:ml-15 lg:ml-40"> Error:{{ error.message }}</h1>
       <div class="text-center mt-38">
-        <h1 class="text-xl font-semibold">{{ cityName}}, <span class="text-gray-400 text-sm">{{ stateName }}</span></h1>
+        <h1 class="text-xl font-semibold">{{ cityName }}, <span class="text-gray-400 text-sm">{{ stateName }}</span></h1>
         <!-- icon + temp side-by-side -->
         <div class="mt-2 flex items-center justify-center gap-4">
           <Icon :icon="tempIcon.icon" :class="tempIcon.class" class="w-16 h-16" />
