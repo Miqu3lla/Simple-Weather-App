@@ -17,7 +17,8 @@ const weatherHumidity = ref(null);
 const weatherVisibility = ref(null);
 const weatherWindSpeed = ref(null);
 const day = ref([]);
-
+const suggestion = ref(['']);
+const showSuggestions = ref(true);
 //async function to fetch weather data
 async function fetchWeather() {
   const q = city.value.trim();
@@ -29,7 +30,7 @@ async function fetchWeather() {
     //get weather data from api and set the city value 
     data.value = await getWeatherData(q);
     //set cityName, temp, and weather values
-    cityName.value = q;
+    cityName.value = data.value.location.name;
     temp.value = data.value.weather.current.temp;
     weather.value = data.value.weather.current.feels_like;
     stateName.value = data.value.location.state
@@ -37,6 +38,14 @@ async function fetchWeather() {
     weatherVisibility.value = data.value.weather.current.visibility / 1000;
     weatherWindSpeed.value = data.value.weather.current.wind_speed;
     day.value = data.value.weather.daily.slice(0,8);
+    
+    // Fixed: Add city to array instead of replacing
+    const cityNameFromAPI = data.value.location.name;
+
+    if (!suggestion.value.includes(cityNameFromAPI)) {
+      suggestion.value.push(cityNameFromAPI);
+    }
+    
     //catch block to set error value
   } catch (err) {
     error.value = err;
@@ -62,9 +71,23 @@ const getDay = computed(() => {
   const date = new Date(days.dt * 1000)
   //convert to weekday name
  return date.toLocaleDateString('en-us',{weekday: 'long'})
-})}
- )
-  fetchWeather()
+ })
+})
+
+const handleSearchInput = computed(() => {
+  const query = city.value.toLowerCase() // Added ()
+  if (!query) {
+    return []; // Return empty array if query is empty
+  }
+  return suggestion.value.filter(item => item.toLowerCase().includes(query))
+})
+
+const clickSuggestion = (suggestion) => {
+  city.value = suggestion;
+  showSuggestions.value = false;
+ }  
+ 
+ fetchWeather()
 </script>
 
 <template>
@@ -77,6 +100,14 @@ const getDay = computed(() => {
     <div class="border-gray shadow-md rounded-xl p-6 w-80 mx-auto h-275 sm:w-75 md:w-135 lg:w-175 xl:w-300 xl:h-200">
       <form @submit.prevent="fetchWeather" class="flex items-center justify-center mt-5">
         <input type="text" v-model="city" placeholder="Search location" class="border-gray shadow-md rounded-lg w-50  h-10 md:w-100 lg:w-150" />
+        <div v-if="showSuggestions" class="absolute bg-white border border-gray-300 mt-22 mr-11 w-50 md:w-100 lg:w-150 max-h-40 overflow-y-auto">
+          <ul>
+            <li v-for="suggestions in handleSearchInput" :key="suggestions" @click="" class ="px-4 py-2">
+              {{ suggestions }}
+            </li>
+          
+          </ul>
+          </div>
         <button type="submit" class="ml-2 p-1 bg-black text-white rounded-full h-10 w-10">
           <Icon icon="solar:magnifer-linear" class="text-white w-8 h-4" />
         </button>
