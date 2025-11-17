@@ -97,7 +97,7 @@ const getDay = computed(() => {
 })
 //debounce timer variable
 let debounceTimer = null;
-
+//function to handle suggestion click
 const clickSuggestion = (value) => {
   city.value = value;
   fetchWeather();
@@ -129,8 +129,8 @@ const clickSuggestion = (value) => {
 
 <template>
   <h1 v-if="loading" class="text-center mt-95">Loading.. Please wait</h1>
-  <div v-else>
-    <div class="text-center my-20 ">
+  <div v-else class ="overflow-x-hidden">
+    <div class="text-center my-20">
       <h1 class="text-3xl font-semibold mb-4">Weather App</h1>
       <h1 class="text-gray-500"> Your daily weather companion</h1>
     </div>
@@ -183,38 +183,12 @@ const clickSuggestion = (value) => {
     <h2 class="text-center text-2xl font-bold mt-16 mb-6 text-gray-800">Weekly Weather Forecast</h2>
     
     <div class="flex ml-10 p-10 gap-3  overflow-x-auto flex-nowrap w-100 sm:w-95 sm:ml-25 md:w-160 md:ml-10 lg:w-200 lg:ml-15 xl:w-full xl:ml-40 " >
-      <DailyForecast
-      :day = 'getDay[0]'
-       :Temp='day[0].temp.day'
-      />
-      <DailyForecast
-      :day = 'getDay[1]'
-       :Temp='day[1].temp.day'
-      />
-      <DailyForecast
-      :day = 'getDay[2]'
-       :Temp='day[2].temp.day'
-      />
-        <DailyForecast
-      :day="getDay[3]"
-      :Temp="day[3].temp.day"
-    />
-        <DailyForecast
-      :day="getDay[4]"
-      :Temp="day[4].temp.day"
-    />
-    <DailyForecast
-      :day="getDay[5]"
-      :Temp="day[5].temp.day"
-    />
-    <DailyForecast
-      :day="getDay[6]"
-      :Temp="day[6].temp.day"
-    />
-    <DailyForecast
-      :day="getDay[7]"
-      :Temp="day[7].temp.day"
-    />
+      <DailyForecast 
+        v-for="(dayData, index) in day"
+        :key="index"
+        :day="getDay[index]"
+        :Temp="dayData.temp.day"
+/>
     
     </div>
   </div>
