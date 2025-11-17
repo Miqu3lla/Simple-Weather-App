@@ -18,12 +18,9 @@ const weatherHumidity = ref(null);
 const weatherVisibility = ref(null);
 const weatherWindSpeed = ref(null);
 const day = ref([]);
-const suggestion = ref(['']);
+const suggestion = ref([]);
 const showSuggestions = ref(false);
-const lat = ref(null);
-const lon = ref(null);
 
-let debounceTimer = null;
 
 //async function to fetch weather data
 async function fetchWeather() {
@@ -34,12 +31,7 @@ async function fetchWeather() {
   //try block to fetch data
   try {
     //get weather data from api and set the city value 
-    showSuggestions.value = true;
     data.value = await getWeatherData(q);
-    lat.value = data.value.location.lat
-    lon.value = data.value.location.lon
-     const response = await fetch(`https://api.openweathermap.org/data/3.0/onecall?lat=${lat.value}&lon=${lon.value}&units=metric&appid=${key}`);
-    const weatherData = await response.json();
     //set cityName, temp, and weather values
     cityName.value = data.value.location.name;
     temp.value = data.value.weather.current.temp;
@@ -61,7 +53,8 @@ async function fetchWeather() {
   } finally {
     loading.value = false;
   }
-  }
+}
+
 //dynamic computed property for temperature icon
   const tempIcon = computed(() => {
     const item = temp.value;
@@ -72,6 +65,7 @@ async function fetchWeather() {
     item >= 5 ? { icon: 'solar:cloud-rain-broken', class: 'text-gray-500' } :
     { icon: 'solar:snowflake-line-duotone', class: 'text-blue-500' };  // Added a default class for consistency
   });
+
 //computed property to get the day value and convert it to weekday name
 const getDay = computed(() => {
   //map through the day array and convert the dt values
@@ -90,13 +84,14 @@ const handleSearchInput = computed(() => {
   return suggestion.value.filter(item => item.toLowerCase().includes(query))
 })
 
-const clickSuggestion = (suggestion) => {
-  city.value = suggestion;
+const clickSuggestion = (value) => {
+  city.value = value;
   showSuggestions.value = false;
-  fetchWeather();
-  showSuggestions.value = true;
-
  }  
+
+ function onFocus() {
+  showSuggestions.value = true;
+ }
  fetchWeather()
 </script>
 
@@ -109,8 +104,8 @@ const clickSuggestion = (suggestion) => {
     </div>
     <div class="border-gray shadow-md rounded-xl p-6 w-80 mx-auto h-275 sm:w-75 md:w-135 lg:w-175 xl:w-300 xl:h-200">
       <form @submit.prevent="fetchWeather" class="flex items-center justify-center mt-5">
-        <input type="text" v-model="city" placeholder="Search location" class="border-gray shadow-md rounded-lg w-50  h-10 md:w-100 lg:w-150"/>
-        <div v-if="showSuggestions && handleSearchInput.length > 0" class="absolute bg-white border border-gray-300 mt-22 mr-11 w-50 md:w-100 lg:w-150 max-h-40 overflow-y-auto">
+        <input type="text" v-model="city" placeholder="Search location" @focus="onFocus" class="border-gray shadow-md rounded-lg w-50  h-10 md:w-100 lg:w-150"/>
+        <div v-show="handleSearchInput.length > 0" class="absolute bg-white border border-gray-300 mt-22 mr-11 w-50 md:w-100 lg:w-150 max-h-40 overflow-y-auto">
           <ul>
             <li v-for="suggestions in handleSearchInput" :key="suggestions" @click="clickSuggestion(suggestions)" class ="px-4 py-2">
               {{ suggestions }}
