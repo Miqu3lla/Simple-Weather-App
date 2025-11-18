@@ -1,4 +1,4 @@
-const key = import.meta.env.VITE_WEATHER_KEY;
+const key = import.meta.env.VITE_WEATHER;
 //async function to get weather data
 export async function getWeatherData(city) {
     //try catch block to handle errors

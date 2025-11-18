@@ -4,7 +4,7 @@ import { getWeatherData } from '@/services/weatherAPI';
 import { Icon } from '@iconify/vue'
 import WeatherStat from '@/components/weatherStat.vue';
 import DailyForecast from '@/components/dailyForecast.vue';
-const key = import.meta.env.VITE_WEATHER_KEY;
+const key = import.meta.env.VITE_WEATHER;
 
 //variables for api data
 const city = ref('Manila');
