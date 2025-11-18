@@ -130,7 +130,7 @@ const clickSuggestion = (value) => {
       <h1 class="text-3xl font-semibold mb-4">Weather App</h1>
       <h1 class="text-gray-500"> Your daily weather companion</h1>
     </div>
-    <div class="border-gray shadow-md rounded-xl p-6 w-80 mx-auto h-275 sm:w-75 md:w-135 lg:w-175 xl:w-300 xl:h-200">
+    <div class="border-gray shadow-lg rounded-xl p-6 w-80 mx-auto h-275  sm:w-75 md:w-135 lg:w-175 xl:w-300 xl:h-200 hover:shadow-xl transition-shadow ease-out">
       <form @submit.prevent="fetchWeather" class="flex items-center justify-center mt-5 relative">
         <input type="text" v-model="city" placeholder="Search location" @focus="onFocus" class="border-gray shadow-md rounded-lg w-50  h-10 md:w-100 lg:w-150"/>
         <div v-show="suggestion.length > 0 && showSuggestions" class="absolute top-full left-0 w-full bg-white border border-gray-300  max-h-40 overflow-y-auto md:w-100 md:left-5 lg:w-150 xl:left-63">
