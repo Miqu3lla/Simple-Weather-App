@@ -18,7 +18,7 @@ const value = ref(props.WeatherValue);
 </script>
 
 <template>
-    <div class ="flex flex-col items-center gap-2 mb-2 border-gray shadow-md rounded-lg p-10 w-45 md:w-50  lg:w-65 xl:w-80">
+    <div class ="flex flex-col items-center gap-2 mb-2 border-gray shadow-md rounded-lg p-10 w-45 hover:scale-105 transition-transform ease-out md:w-50  lg:w-65 xl:w-80">
         <Icon :icon="props.WeatherIcon" :class="icon"  class="h-8 w-8 "/>
         <h1> {{ name }}</h1>
         <h1> {{ value }}

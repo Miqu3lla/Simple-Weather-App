@@ -4,8 +4,9 @@ import { getWeatherData } from '@/services/weatherAPI';
 import { Icon } from '@iconify/vue'
 import WeatherStat from '@/components/weatherStat.vue';
 import DailyForecast from '@/components/dailyForecast.vue';
-//variables for api data
 const key = import.meta.env.VITE_WEATHER_KEY;
+
+//variables for api data
 const city = ref('Manila');
 const data = ref(null);
 const temp = ref(null);
@@ -21,6 +22,7 @@ const day = ref([]);
 const suggestion = ref([]);
 const showSuggestions = ref(false);
 
+//call geocoding API for dynamic suggestions
 async function getGeocodingData() {
   const q = city.value.trim();
   if (!q) return;
@@ -40,8 +42,6 @@ async function getGeocodingData() {
   }
 }
 
-
-
 //async function to fetch weather data
 async function fetchWeather() {
   const q = city.value.trim();
@@ -60,12 +60,7 @@ async function fetchWeather() {
     weatherHumidity.value = data.value.weather.current.humidity;
     weatherVisibility.value = data.value.weather.current.visibility / 1000;
     weatherWindSpeed.value = data.value.weather.current.wind_speed;
-    day.value = data.value.weather.daily.slice(0,8);
-
-    if (!suggestion.value.includes(cityName.value)) {
-      suggestion.value.push(cityName.value);
-    }
-    
+    day.value = data.value.weather.daily.slice(0,8);    
     //catch block to set error value
   } catch (err) {
     error.value = err;
@@ -97,6 +92,7 @@ const getDay = computed(() => {
 })
 //debounce timer variable
 let debounceTimer = null;
+
 //function to handle suggestion click
 const clickSuggestion = (value) => {
   city.value = value;
